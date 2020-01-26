@@ -1,9 +1,9 @@
 # Loans_api
 
-## Use case
+### Use case
 A Lenme borrower would like to borrow $5,000.00 on paying them back in 6 months. One of the Lenme investors has offered him a 15% Annual Interest Rate. A $3.00 Lenme fee will be added to the total loan amount to be paid by the investor.  
 
-## Requirements
+### Requirements
 You are required to develop a Django REST project to be able to build the following flow through its
 APIs;
  
@@ -15,6 +15,6 @@ APIs;
 6. The loan payments will be created with the monthly amount to be paid and its due date
 7. Once all the payments are successfully paid to the investor, the loan status will be Completed
 
-## Future work
-1- Handling authendication.
-2- Managing payment jobs.
+### Future work
+1. Handling authendication
+2. Managing payment jobs
