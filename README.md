@@ -5,7 +5,7 @@ A Lenme borrower would like to borrow $5,000.00 on paying them back in 6 months.
 
 ### Requirements
 You are required to develop a Django REST project to be able to build the following flow through its
-APIs;
+APIs.
  
 1. The borrower creates a loan request including the above loan amount and loan period 
 2. The investor will submit an offer for the borrower’s loan request with the above interest rate
@@ -18,3 +18,5 @@ APIs;
 ### Future work
 1. Handling authendication
 2. Managing payment jobs
+3. Making users
+4. fixing permissions
