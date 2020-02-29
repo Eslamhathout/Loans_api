@@ -1,17 +1,52 @@
 from rest_framework.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+from rest_framework import viewsets
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
-from .serializers import LoanSerializer, InvestSerializer,LoanUpdateSerializer
-from loans.models import Loan, Invest, Investor, Investor_Notification, Borrower_Notification
+from .serializers import LoanSerializer, InvestSerializer,LoanUpdateSerializer, UserSerializer
+from loans.models import Loan, Invest, Investor, Investor_Notification, Borrower_Notification, User, Borrower
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from rest_framework.decorators import api_view
+from rest_framework import permissions
+
+#Root View
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'users': reverse('user-list', request=request, format=format),
+        'loans': reverse('loan-list', request=request, format=format),
+    })
 
 
-class LoansList(ListAPIView):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+# class LoansList(ListAPIView):
+#     queryset = Loan.objects.all()
+#     serializer_class = LoanSerializer
+
+# class LoanCreate(CreateAPIView):
+#     serializer_class = LoanSerializer
+
+#     # The create() method of our serializer will now be passed an additional 'owner' field, along with the validated data from the request.
+#     def perform_create(self, serializer):
+#         serializer.save(borrower=self.request.user)  
+
+class LoanViewSet(viewsets.ModelViewSet):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    lookup_field = ('id')
 
-class LoanCreate(CreateAPIView):
-    serializer_class = LoanSerializer
+    def perform_create(self, serializer):
+        borrower = Borrower.objects.get(user=self.request.user)
+        print("++++++++++++++++++++++++++++++")
+        print(borrower.user.username)
+        serializer.save(borrower=borrower)  
+
 
 class InvestCreate(CreateAPIView):
     serializer_class = InvestSerializer
@@ -23,7 +58,7 @@ class InvestCreate(CreateAPIView):
             investor_obj = Investor.objects.get(pk=investor_id)
             loan_id = request.data.get('targeted_loan')
             loan_obj = Loan.objects.get(pk=loan_id)
-            if (investor_obj.balance + lenme_fees) < loan_obj.amount:
+            if (investor_obj.user.balance + lenme_fees) < loan_obj.amount:
                 raise ValidationError({"Error": "You don't have enough balance to cover the loan"})
             else:
                 # TODO: Send notification for new invest requests.
@@ -51,8 +86,8 @@ class LoanRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
 
                 # TODO: Update investor's balance
                 investor_obj = Investor.objects.get(invest__id=invest_id)
-                investor_obj.balance -= loan_obj.amount + 3.0
-                investor_obj.save()
+                investor_obj.user.balance -= loan_obj.amount + 3.0
+                investor_obj.user.save()
 
                 # TODO: Manage the loan status
                 loan_obj.loan_status = 'Funded'

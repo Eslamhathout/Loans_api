@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Borrower, Loan, Investor, Invest, Investor_Notification, Borrower_Notification
+from .models import Borrower, Loan, Investor, Invest, Investor_Notification, Borrower_Notification, User
 # Register your models here.
 
+admin.site.register(User)
 admin.site.register(Borrower)
 admin.site.register(Loan)
 admin.site.register(Investor)

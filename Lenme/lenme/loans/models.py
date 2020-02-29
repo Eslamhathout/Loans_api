@@ -1,12 +1,20 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
-
-class Borrower(models.Model):
-    name = models.CharField(max_length=50)
-    email = models.EmailField(null=True, blank=True)
+class User(AbstractUser):
+    is_borrower = models.BooleanField(default=True)
+    is_investor = models.BooleanField(default=False)
+    #TODO: Balance for both users. Investors: to make sure he/she has sufficient before funding. Borrower: to deduct monthly refunds.
+    balance = models.FloatField(default=0.0)
 
     def __str__(self):
-        return self.name
+        return self.username
+
+class Borrower(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
 
 class Borrower_Notification(models.Model):
     body = models.CharField(max_length=200)
@@ -17,12 +25,10 @@ class Borrower_Notification(models.Model):
         return self.body
 
 class Investor(models.Model):
-    name = models.CharField(max_length=50)
-    email = models.EmailField(null=True, blank=True)
-    balance = models.FloatField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.user.username
 
 class Investor_Notification(models.Model):
     body = models.CharField(max_length=200)
