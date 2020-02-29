@@ -22,18 +22,8 @@ def api_root(request, format=None):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    lookup_field = ('id')
 
-
-# class LoansList(ListAPIView):
-#     queryset = Loan.objects.all()
-#     serializer_class = LoanSerializer
-
-# class LoanCreate(CreateAPIView):
-#     serializer_class = LoanSerializer
-
-#     # The create() method of our serializer will now be passed an additional 'owner' field, along with the validated data from the request.
-#     def perform_create(self, serializer):
-#         serializer.save(borrower=self.request.user)  
 
 class LoanViewSet(viewsets.ModelViewSet):
     queryset = Loan.objects.all()
@@ -43,8 +33,6 @@ class LoanViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         borrower = Borrower.objects.get(user=self.request.user)
-        print("++++++++++++++++++++++++++++++")
-        print(borrower.user.username)
         serializer.save(borrower=borrower)  
 
 

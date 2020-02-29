@@ -6,10 +6,12 @@ from allauth.account.adapter import get_adapter
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'is_borrower', 'is_investor','balance')
+        fields = ('id', 'username', 'email','is_borrower', 'is_investor','balance')
 
+#For registering a custom user
 class CustomUserSerializer(RegisterSerializer):
     is_borrower = serializers.BooleanField()
     is_investor = serializers.BooleanField()
@@ -45,14 +47,10 @@ class CustomUserSerializer(RegisterSerializer):
 
         return user
 
-
-
-
 class InvestSerializer(serializers.ModelSerializer):
     class Meta:
         model= Invest
         fields = '__all__'
-
 
 class LoanSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -69,9 +67,6 @@ class LoanSerializer(serializers.Serializer):
     
     def create(self, validated_data):
         return Loan.objects.create(**validated_data)
-    
-
-
 
 class LoanUpdateSerializer(serializers.ModelSerializer):
     invest_requests = serializers.SerializerMethodField()
