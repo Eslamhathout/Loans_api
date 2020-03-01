@@ -25,7 +25,6 @@ You can use the base server URL `localhost:[port]` to explore the API root and t
 class User(AbstractUser):
     is_borrower = models.BooleanField(default=True)
     is_investor = models.BooleanField(default=False)
-    #TODO: Balance for both users. Investors: to make sure he/she has sufficient before funding. Borrower: to deduct monthly refunds.
     balance = models.FloatField(default=0.0)
 
     def __str__(self):
