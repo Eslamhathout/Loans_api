@@ -15,6 +15,21 @@ APIs.
 6. The loan payments will be created with the monthly amount to be paid and its due date
 7. Once all the payments are successfully paid to the investor, the loan status will be Completed
 
+### API Base URL
+You can use the base server URL `localhost:[port]` to explore the API root and to get links for users and available loans.
+
+### Authendication and Permissions
+*  Only borrower user have GET and POST permissions for creating or browsing existing loans. Investors and anonymous users can read only.
+* Only loan borrower has DELETE and PUT for his/her created loans.
+* Only Investor can bid an invest.
+
+You can use the following links for GET,POST, DELETE, and POST methods.
+```
+path('loans', loan_list, name='loan-list'),
+path('loans/<id>', loan_detail, name='loan_detail'),
+```
+
+
 ### Future work
 1. Handling authendication
 2. Managing payment jobs
