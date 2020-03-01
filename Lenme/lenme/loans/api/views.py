@@ -38,6 +38,7 @@ class LoanViewSet(viewsets.ModelViewSet):
 
 class InvestCreate(CreateAPIView):
     serializer_class = InvestSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         lenme_fees = 3.0
