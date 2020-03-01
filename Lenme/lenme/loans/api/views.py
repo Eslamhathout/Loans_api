@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view
 from rest_framework import permissions
+from .permissions import IsInvestorOnly, IsBorrowerOrReadOnly
 
 #Root View
 @api_view(['GET'])
@@ -28,7 +29,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class LoanViewSet(viewsets.ModelViewSet):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsBorrowerOrReadOnly]
     lookup_field = ('id')
 
     def perform_create(self, serializer):
@@ -38,7 +39,7 @@ class LoanViewSet(viewsets.ModelViewSet):
 
 class InvestCreate(CreateAPIView):
     serializer_class = InvestSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsInvestorOnly]
 
     def create(self, request, *args, **kwargs):
         lenme_fees = 3.0
@@ -64,6 +65,8 @@ class LoanRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Loan.objects.all()
     serializer_class = LoanUpdateSerializer
     lookup_field = ('id')
+    permission_classes = [permissions.IsAuthenticated]
+
 
     def update(self, request, *args, **kwargs):
         try:
