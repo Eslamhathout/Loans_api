@@ -42,8 +42,7 @@ class InvestCreate(CreateAPIView):
     def create(self, request, *args, **kwargs):
         lenme_fees = 3.0
         try:
-            investor_id = request.data.get('investor')
-            investor_obj = Investor.objects.get(pk=investor_id)
+            investor_obj = Investor.objects.get(user=self.request.user)
             loan_id = request.data.get('targeted_loan')
             loan_obj = Loan.objects.get(pk=loan_id)
             if (investor_obj.user.balance + lenme_fees) < loan_obj.amount:
@@ -54,7 +53,11 @@ class InvestCreate(CreateAPIView):
                 invest_request.save()
         except ObjectDoesNotExist:
             raise ValidationError({"Error": "Can't perform your transaction"})
-        return super().create(request, *args, **kwargs) 
+        return super().create(request, *args, **kwargs)
+    
+    def perform_create(self, serializer):
+        investor = Investor.objects.get(user=self.request.user)
+        serializer.save(investor=investor)
 
 class LoanRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Loan.objects.all()

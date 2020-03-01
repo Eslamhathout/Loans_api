@@ -48,9 +48,13 @@ class CustomUserSerializer(RegisterSerializer):
         return user
 
 class InvestSerializer(serializers.ModelSerializer):
+    investor = serializers.ReadOnlyField(source='investor.user.username')
     class Meta:
         model= Invest
-        fields = '__all__'
+        fields = ('investor', 'interest_rate', 'targeted_loan')
+
+    def create(self, validated_data):
+        return Invest.objects.create(**validated_data)
 
 class LoanSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
