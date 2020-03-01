@@ -50,7 +50,7 @@ class CustomUserSerializer(RegisterSerializer):
 class InvestSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     investor = serializers.ReadOnlyField(source='investor.user.username')
-    
+
     class Meta:
         model= Invest
         fields = ('id','investor', 'interest_rate', 'targeted_loan')
@@ -58,7 +58,7 @@ class InvestSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Invest.objects.create(**validated_data)
 
-class LoanSerializer(serializers.Serializer):
+class LoanSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     invest_requests = serializers.SerializerMethodField()
     invest_id = serializers.IntegerField(read_only=True)
@@ -66,13 +66,16 @@ class LoanSerializer(serializers.Serializer):
     period_in_months = serializers.IntegerField(required=True)
     loan_status = serializers.CharField(required=True)
     amount = serializers.FloatField(required=True)
-
+    class Meta:
+        model= Loan
+        fields = "__all__"
     def get_invest_requests(self, instance):
         invest_requests = Invest.objects.filter(targeted_loan=instance)
         return InvestSerializer(invest_requests, many=True).data
     
     def create(self, validated_data):
         return Loan.objects.create(**validated_data)
+    
 
 class LoanUpdateSerializer(serializers.ModelSerializer):
     invest_requests = serializers.SerializerMethodField()

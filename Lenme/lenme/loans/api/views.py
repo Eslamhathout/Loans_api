@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.decorators import api_view
 from rest_framework import permissions
-from .permissions import IsInvestorOnly, IsBorrowerOrReadOnly
+from .permissions import IsInvestorOnly, IsBorrowerOrReadOnly, IsLoanCreator
 
 #Root View
 @api_view(['GET'])
@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class LoanViewSet(viewsets.ModelViewSet):
     queryset = Loan.objects.all()
     serializer_class = LoanSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsBorrowerOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsBorrowerOrReadOnly, IsLoanCreator]
     lookup_field = ('id')
 
     def perform_create(self, serializer):
@@ -65,7 +65,7 @@ class LoanRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     queryset = Loan.objects.all()
     serializer_class = LoanUpdateSerializer
     lookup_field = ('id')
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsLoanCreator]
 
 
     def update(self, request, *args, **kwargs):

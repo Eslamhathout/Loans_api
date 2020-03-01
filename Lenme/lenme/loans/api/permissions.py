@@ -2,21 +2,17 @@ from rest_framework import permissions
 from loans.models import Investor, User, Borrower
 
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
+class IsLoanCreator(permissions.BasePermission):
     """
-    Custom permission to only allow owners of an object to edit it.
+    Custom permission to only allow owners of a loan to add an invest or edit existing loan
     """
-
     def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
         if request.method in permissions.SAFE_METHODS:
             return True
+        return obj.borrower == Borrower.objects.get(user=request.user)
 
-        # Write permissions are only allowed to the owner of the snippet.
-        return obj.owner == request.user
 
-class IsBorrowerOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
+class IsBorrowerOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow borrowers to create a Loan obj, other authendicated/unauthendicated users can read only
     """
