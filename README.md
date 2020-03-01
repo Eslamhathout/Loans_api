@@ -19,19 +19,41 @@ APIs.
 You can use the base server URL `localhost:[port]` to explore the API root and to get links for users and available loans.
 
 ### Authendication and Permissions
-*  Only borrower user have GET and POST permissions for creating or browsing existing loans. Investors and anonymous users can read only.
+* Annonymous users can't perform transactions on the API.
+* There are two types of custome users [Borrower, Investor] and both inherit from a User model Abstract class.
+```
+class User(AbstractUser):
+    is_borrower = models.BooleanField(default=True)
+    is_investor = models.BooleanField(default=False)
+    #TODO: Balance for both users. Investors: to make sure he/she has sufficient before funding. Borrower: to deduct monthly refunds.
+    balance = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return self.username
+```
+* Only borrower user have GET and POST permissions for creating or browsing existing loans. Investors and anonymous users can read only.
 * Only loan borrower has DELETE and PUT for his/her created loans.
 * Only Investor can bid an invest.
 
-You can use the following links for GET,POST, DELETE, and POST methods.
+You can use the following links for GET,POST, DELETE, and POST methods according to authendication and permission policies.
 ```
 path('loans', loan_list, name='loan-list'),
 path('loans/<id>', loan_detail, name='loan_detail'),
 ```
-
+```
+path('loans/<id>/invest', LoanRetrieveUpdateDestroy.as_view()),
+path('invest/new', InvestCreate.as_view()),
+```
+```
+path('users',user_list, name = 'user-list'),
+path('users/<id>', user_detail, name='user-detail'),
+```
+```
+path('api-auth/', include('rest_framework.urls')),
+```
 
 ### Future work
-1. Handling authendication
+1. Handling authendication [DONE]
 2. Managing payment jobs
-3. Making users
-4. fixing permissions
+3. Making users [DONE]
+4. Fixing permissions [DONE]
