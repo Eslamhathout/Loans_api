@@ -15,6 +15,9 @@ APIs.
 6. The loan payments will be created with the monthly amount to be paid and its due date
 7. Once all the payments are successfully paid to the investor, the loan status will be Completed
 
+### API Base URL
+**code localhost:[port]
+
 ### Future work
 1. Handling authendication
 2. Managing payment jobs
