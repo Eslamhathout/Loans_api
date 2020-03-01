@@ -16,7 +16,7 @@ APIs.
 7. Once all the payments are successfully paid to the investor, the loan status will be Completed
 
 ### API Base URL
-**code localhost:[port]
+`code localhost:[port]`
 
 ### Future work
 1. Handling authendication
